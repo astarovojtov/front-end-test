@@ -29,6 +29,13 @@ function Check(name, phone) {
             alert('Телефон не соответствует');
             return false;
         };
+        if (users.length != 0) {
+            let userIndex = users.findIndex(user => user.phone === phone)
+            if (userIndex != -1) {
+                alert('Телефон уже существует');
+                return false;
+            };
+        }
         checked = true;
     } else {
         let controlName = /^(?:((([^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]'’,\-.\s])){1,}(['’,\-\.]){0,1}){2,}(([^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]'’,\-. ]))*(([ ]+){0,1}(((([^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]'’,\-\.\s])){1,})(['’\-,\.]){0,1}){2,}((([^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]'’,\-\.\s])){2,})?)*)$/;
@@ -45,6 +52,14 @@ function Check(name, phone) {
             alert('Телефон не соответствует');
             return false;
         };
+        if (users.length != 0) {
+            let userIndex = users.findIndex(user => user.phone === inputPhone.value)
+            if (userIndex != -1) {
+                alert('Телефон уже существует');
+                return false;
+            };
+        }
+
         checked = true;
     }
 }
