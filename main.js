@@ -47,8 +47,6 @@ function Check(name, phone) {
         }
         if (errorMessage.classList.contains('open-error')) {
             errorMessage.classList.remove('open-error');
-        } else {
-            return 0;
         }
         checked = true;
     } else {
@@ -83,8 +81,6 @@ function Check(name, phone) {
         }
         if (errorMessage.classList.contains('open-error')) {
             errorMessage.classList.remove('open-error');
-        } else {
-            return 0;
         }
         checked = true;
     }
