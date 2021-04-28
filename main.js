@@ -4,15 +4,50 @@ let submit = document.getElementById("submit");
 let output = document.getElementById('output');
 var contact = document.createElement('div');
 let count = 0;
+let checked = false;
+let edited = false;
 let users = [];
 
 submit.addEventListener("click", function () {
-    if (inputName.value == "" || inputPhone.value == "") {
-        alert("Пожалуйста, введите имя или телефон");
+    Check();
+    CreateContact();
+});
+
+function Check(name, phone) {
+    if (edited === true) {
+        let controlName = /^(?:((([^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]'’,\-.\s])){1,}(['’,\-\.]){0,1}){2,}(([^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]'’,\-. ]))*(([ ]+){0,1}(((([^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]'’,\-\.\s])){1,})(['’\-,\.]){0,1}){2,}((([^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]'’,\-\.\s])){2,})?)*)$/;
+        let controlPhone = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+        if (name == "" || phone == "") {
+            alert("Пожалуйста, введите имя или телефон");
+            return false;
+        };
+        if (!controlName.test(name)) {
+            alert('Имя не соответствует');
+            return false;
+        };
+        if (!controlPhone.test(phone)) {
+            alert('Телефон не соответствует');
+            return false;
+        };
+        checked = true;
     } else {
-        CreateContact();
+        let controlName = /^(?:((([^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]'’,\-.\s])){1,}(['’,\-\.]){0,1}){2,}(([^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]'’,\-. ]))*(([ ]+){0,1}(((([^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]'’,\-\.\s])){1,})(['’\-,\.]){0,1}){2,}((([^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]'’,\-\.\s])){2,})?)*)$/;
+        let controlPhone = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+        if (inputName.value == "" || inputPhone.value == "") {
+            alert("Пожалуйста, введите имя или телефон");
+            return false;
+        };
+        if (!controlName.test(inputName.value)) {
+            alert('Имя не соответствует');
+            return false;
+        };
+        if (!controlPhone.test(inputPhone.value)) {
+            alert('Телефон не соответствует');
+            return false;
+        };
+        checked = true;
     }
-})
+}
 
 
 output.onclick = function (event) {
@@ -32,6 +67,7 @@ output.onclick = function (event) {
             }, 900);
             break;
         case 'edit':
+            edited = true;
             targetParentChildrenName.classList.add("edit");
             targetParentChildrenPhone.classList.add("edit");
             targetParentChildrenName.contentEditable = true;
@@ -40,14 +76,20 @@ output.onclick = function (event) {
             break;
         case 'save':
             console.log(targetParent)
-            targetParentChildrenName.classList.remove("edit");
-            targetParentChildrenPhone.classList.remove("edit");
-            targetParentChildrenName.contentEditable = false;
-            targetParentChildrenPhone.contentEditable = false;
-            users[targetParent].name = targetParentChildrenName.textContent;
-            users[targetParent].phone = targetParentChildrenPhone.textContent;
-            event.target.textContent = 'edit';
-            updateLocal()
+            Check(targetParentChildrenName.textContent, targetParentChildrenPhone.textContent);
+            if (checked === true) {
+                targetParentChildrenName.classList.remove("edit");
+                targetParentChildrenPhone.classList.remove("edit");
+                targetParentChildrenName.contentEditable = false;
+                targetParentChildrenPhone.contentEditable = false;
+                users[targetParent].name = targetParentChildrenName.textContent;
+                users[targetParent].phone = targetParentChildrenPhone.textContent;
+                event.target.textContent = 'edit';
+                updateLocal();
+                checked = false;
+                edited = false;
+            }
+
             break;
         default:
             return false;
@@ -63,25 +105,29 @@ class Contacts {
 }
 
 function CreateContact() {
-    var str = `<div class='grid-container' id='${count}'>
+    if (checked === true) {
+        var str = `<div class='grid-container' id='${count}'>
     <div class="name" contenteditable="false">${inputName.value}</div>
     <div class="phone" contenteditable="false">${inputPhone.value}</div>
     <div class="btn-edit"><button>edit</button></div>
     <div class="btn-del"><button>delete</button></div>
     </div>`;
-    contact.innerHTML = str + contact.innerHTML;
+        contact.innerHTML = str + contact.innerHTML;
 
-    let user = new Contacts({
-        id: count,
-        name: inputName.value,
-        phone: inputPhone.value,
-    })
-    count++;
-    output.append(contact)
-    users.push(user);
-    inputName.value = "";
-    inputPhone.value = "";
-    updateLocal()
+        let user = new Contacts({
+            id: count,
+            name: inputName.value,
+            phone: inputPhone.value,
+        })
+        count++;
+        output.append(contact)
+        users.push(user);
+        inputName.value = "";
+        inputPhone.value = "";
+        updateLocal();
+        checked = false;
+    }
+
 }
 
 function updateLocal() {
